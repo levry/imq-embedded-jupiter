@@ -1,6 +1,11 @@
 language: java
 install: true
 jdk: oraclejdk8
+addons:
+  sonarcloud:
+    organization: "levry-github"
+    token:
+      secure: A2B/MbmkFkU5u+xSySo8hiM7SkfUca264CHuaV5ujLilWHPXxo+ZzJ8qsQt4nHkOHEovn7KGiBLkMQ9KwB+mXOG4NZcQXaDq363J22F1NUWj3CBCGHKVl42fKN5j2TpW+kJOV/JXllJixmjx5DJxV2odI4nuowJFPoKtjw99xRQJvdMsOZYlbbeMXeUDHqUlAyb4VWibtqfYboArPmbLeg5Thhj9RAWaBctdzpodygqQbVNunFpxn0F6S0pJlqrTVNusexXY4NMSwKR+cWbH2tUzqjRu6psLkVt6ZfyQF4uWb6KZt/qgeC60UbPks2yp4fG8xsTcI1fM6zm56g3jvqhiLtPxyDB6QypOxknRcmw/smdl892bRXUMA5lhMggADPghev7tbkVc9BsbK5AgNC+5dewAjXTnvzdomjK4R08XLefIpl+M6M4COfV7/I2QV1QgysRFoLzlTDomVICzjkTEuHQ79ZjzhtFtE98IgaR1eoCbbZqaA91biRZFo9MnvLkwyudyE09oMk4Bo8luZEi12SBehYQx9qBE31cQdSKgaXVw0YlTIV6PbG7fe0MsxzuZR4zrsmByOVuVPbZRfHLP1JhV/SbDewqmIAKLVLfD36QM0uBfBUZqR1NeuCl0QaocXKnaR6r8eSarnhebYKYeJ4JEqooGls8iEglFCL8=
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -8,10 +13,13 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    - $HOME/.sonar/cache
 before_install:
   - chmod +x gradlew
 script:
   - ./gradlew check --console=plain
+  - ./gradlew jacocoTestReport --console=plain
+  - ./gradlew sonarqube --console=plain
 branches:
   only:
   - master
