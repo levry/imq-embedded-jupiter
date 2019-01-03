@@ -3,7 +3,6 @@ plugins {
     id 'maven'
     id 'jacoco'
     id 'org.sonarqube' version '2.6.1'
-    id 'net.ltgt.apt' version '0.10'
     id 'com.jfrog.bintray' version '1.8.4'
 }
 
@@ -11,12 +10,12 @@ group = 'com.github.levry'
 version = '0.0.1'
 description = 'Embedded openMQ broker jupiter extension'
 
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
 
 ext {
-    lombokVersion = '1.18.0'
+    lombokVersion = '1.18.4'
     logbackVersion = '1.2.3'
-    junitVersion = '5.2.0'
+    junitVersion = '5.3.2'
     assertjVersion = '3.10.0'
 }
 
@@ -28,16 +27,18 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.levry:imq-embedded:0.0.1'
-    compile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-    compile "ch.qos.logback:logback-classic:${logbackVersion}"
+    implementation platform("org.junit:junit-bom:${junitVersion}")
+    
+    implementation 'com.github.levry:imq-embedded:0.0.1'
+    implementation "org.junit.jupiter:junit-jupiter-api"
+    implementation "ch.qos.logback:logback-classic:${logbackVersion}"
 
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    apt "org.projectlombok:lombok:${lombokVersion}"
 
-    testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-    testCompile "org.assertj:assertj-core:${assertjVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine"
+    testImplementation "org.assertj:assertj-core:${assertjVersion}"
 }
 
 test {
