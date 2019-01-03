@@ -1,0 +1,89 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id 'jacoco'
+    id 'org.sonarqube' version '2.6.1'
+    id 'net.ltgt.apt' version '0.10'
+    id 'com.jfrog.bintray' version '1.8.4'
+}
+
+group = 'com.github.levry'
+version = '0.0.1'
+description = 'Embedded openMQ broker jupiter extension'
+
+sourceCompatibility = 1.8
+
+ext {
+    lombokVersion = '1.18.0'
+    logbackVersion = '1.2.3'
+    junitVersion = '5.2.0'
+    assertjVersion = '3.10.0'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+      url 'https://dl.bintray.com/levry/maven'
+    }
+}
+
+dependencies {
+    compile 'com.github.levry:imq-embedded:0.0.1'
+    compile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    compile "ch.qos.logback:logback-classic:${logbackVersion}"
+
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    apt "org.projectlombok:lombok:${lombokVersion}"
+
+    testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    testCompile "org.assertj:assertj-core:${assertjVersion}"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectName", project.name
+        property "sonar.projectKey", "github.levry.imq.embedded.jupiter"
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER') ?: project.property('bintray.user')
+    key = System.getenv('BINTRAY_KEY') ?: project.property('bintray.key')
+    configurations = ['archives']
+
+    pkg {
+        repo = 'maven'
+        name = 'imq-embedded-jupiter'
+        licenses = ['MIT']
+        publish = true
+        publicDownloadNumbers = true
+        vcsUrl = 'https://github.com/levry/imq-embedded-jupiter.git'
+        labels = ['java', 'openmq', 'jms']
+        version {
+            name = project.version
+            desc = project.description
+            released = new Date()
+            vcsTag = project.version
+        }
+    }
+}
